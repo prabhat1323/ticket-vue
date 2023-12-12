@@ -11,12 +11,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.7.0/remixicon.css" integrity="sha512-vgK7iuWG4Uq4GJHovntONntOoSduelAYImQTT3f0mvdUcI95qQgSmf4ldDhn/FNl3g/xouqOtsm/NxFqaTnxbA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Add reCAPTCHA script -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body{
             font-family: 'Open Sans', sans-serif;
+            scrollbar-width: thin;
+        }
+        .content::-webkit-scrollbar {
+            width: 8px; /* Adjust width as needed */
+        }
+
+        .content::-webkit-scrollbar-thumb {
+                background-color: rgb(148 163 184); /* Adjust color as needed */
+        }
+
+        .content::-webkit-scrollbar-track {
+        /* background-color: #2c3e50; Adjust color as needed */
+        background-color: rgb(203 213 225);
         }
     </style>
 </head>
@@ -24,10 +38,19 @@
     <div id="app">
         <div id="modal" :class="{ 'hidden animate__animated animate__zoomOut': !collapse, 'block animate__animated animate__slideInRight': collapse }" class="bg-slate-50 fixed h-screen md:h-4/5 w-[360px] bottom-2 right-2 z-49">
             <div class="relative w-full h-full border">
+                <!-- spinner -->
+                <div :class="{ 'hidden': !spinner }" class="w-full h-full absolute z-1 bg-slate-100 flex items-center justify-center flex-col z-50">
+                    <i class="fa fa-spinner fa-spin text-rose-400 text-6xl"></i>
+                    <p class="text-rose-400">Please wait...</p>
+                </div>
+                <div :class="{ 'hidden': spinner }" class="w-full hidden h-full absolute z-1 bg-slate-100 flex items-center justify-center flex-col z-50">
+                    <div class="g-recaptcha" data-sitekey="6Lc1zB4oAAAAABqKJGvOjxpriQmvgghT2h-mk-UK" @verify="onRecaptchaVerify"></div>
+                </div>
+                <!-- start header code  -->
                 <header class="bg-rose-500 flex items-center justify-between p-2 py-3 text-white">
                     <div class="text-2xl flex gap-2 items-center">
-                        <div>
-                            <i class="ri-chat-1-fill font-semibold"></i>
+                        <div class="h-10 w-10 shadow-sm border">
+                            <img src="images/support.webp" alt="support">
                         </div>
                         <p class="text-sm font-bold">Ask Epp</p>
                     </div>
@@ -36,59 +59,44 @@
                         <button><i class="ri-close-fill text-2xl"></i></button>
                     </div>
                 </header>
-                <div class="body w-full p-4 py-10 overflow-y-auto h-5/6 ">
-                    <!-- <div class="w-full h-full flex justify-center items-center">
-                        <i class="ri-loader-2-line text-8xl text-rose-400 fa-spin"></i>
-                    </div> -->
+                <!-- end header code  -->
+
+                <!-- start content -->
+                <div class="content w-full p-4 py-10 overflow-y-auto h-5/6 ">
                     <div class="flex gap-4 mb-4">
                         <div>
-                            <div class="border p-2 py-1 bg-slate-100">
-                                <i class="ri-user-line text-lg font-bold text-rose-600"></i>
-                            </div> 
+                            <div class="h-10 w-10 border bg-rose-500">
+                                <img src="images/support.webp" alt="support">
+                            </div>
                         </div>
-
-                        <p class="text-gray-500 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Placeat vel libero maiores repudiandae quaerat harum amet obcaecati praesentium quisquam officia magni, et odio quas provident atque dolores sapiente quos deleniti!</p>
-                    </div>
-                    <div class="flex gap-4 mb-4">
-                        <div>
-                            <div class="border p-2 py-1 bg-slate-100">
-                                <i class="ri-user-line text-lg font-bold text-rose-600"></i>
-                            </div> 
-                        </div>
-
                         <p class="text-gray-500 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Placeat vel libero maiores repudiandae quaerat harum amet obcaecati praesentium quisquam officia magni, et odio quas provident atque dolores sapiente quos deleniti!</p>
                     </div>
                     
                     <p class="py-2 text-teal-600 mb-4">Here are some popular queries</p>
                     <div class="grid grid-cols-3 gap-3 text-sm">
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 1</button>
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 2</button>
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 3</button>
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 4</button>
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 5</button>
-                        <button class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">Menu 6</button>
+                        <button @click="choosenQuery(query)" v-for="(query, index) in menuList[menuIndex].queries" class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">{{ query }}</button> 
                     </div>
-                    <div class="bg-white my-4 flex items-center gap-4 p-2">
-                        <div class="border p-2 py-1 bg-slate-100">
+                    <div class="bg-white my-4 flex items-center gap-4 p-3 shadow-sm">
+                        <div class="border p-2 py-1 bg-slate-50">
                             <i class="ri-user-line text-lg font-bold text-rose-600"></i>
                         </div>
                         <div>
                             <button class="bg-teal-600 p-2 px-4 text-white rounded text-sm">Menu 1</button>
                         </div>
                     </div>
+                    <div class="w-full">
+                        <input type="text" class="border p-2 py-3 w-full text-sm shadow-sm border-teal-300 focus:outline-none" placeholder="Enter your order no">
+                    </div>
                 </div>
-                
-                <footer class="w-full absolute bottom-0 left-0 h-20 bg-gray-100 border-t p-2 flex justify-between items-center border-bottom gap-2 z-50">
+                <!-- end content -->
+
+                <!-- footer code start -->
+                <footer class="w-full absolute bottom-0 left-0 h-20 bg-gray-100 border-t p-2 flex justify-between items-center border-bottom gap-2">
                     <div class="bg-white flex justify-center items-center border px-3 py-1 relative cursor-pointer">
                         <button  @click="openMenu"><i :class="{ 'ri-menu-line': !menu, 'ri-close-fill': menu }" class="text-rose-600 text-2xl"></i></button>
                         <div :class="{ 'hidden': !menu, 'block': menu }" class="absolute border w-[150px] bottom-12 left-0 bg-slate-50 rounded">
                             <ul class="flex flex-col">
-                                <li class="border-b px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 1</a></li>
-                                <li class="border-b px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 2</a></li>
-                                <li class="border-b px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 3</a></li>
-                                <li class="border-b px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 4</a></li>
-                                <li class="border-b px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 5</a></li>
-                                <li class="px-2 py-2 text-slate-600 hover:text-rose-600"><a href="#">Menu 6</a></li>
+                                <li v-for="(menu, index) in menuList" class="border-b px-2 py-2 text-slate-600 hover:text-rose-600 hover:bg-white"><a href="#" @click="getQuery(index)">{{menu.name}}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -103,15 +111,14 @@
                         </form>
                     </div>
                 </footer>
-                <!-- <div class="w-full h-full flex justify-center items-center absolute left-0 top-12 ">
-                    <div class="g-recaptcha" data-sitekey="6Lc1zB4oAAAAABqKJGvOjxpriQmvgghT2h-mk-UK" @verify="onRecaptchaVerify"></div>
-                </div> -->
+                <!-- end footer code -->
+
             </div> 
         </div>
 
-        <div class="cursor-pointer fixed right-8 bottom-8 rounded-full h-16 w-16 bg-rose-500 flex items-center justify-center shadow-sm z-[-1] cursor-pointer">
-            <i class="ri-chat-1-fill text-white text-4xl" @click="openChat"></i>
-        </div>
+        <button @click="openChat" class="cursor-pointer fixed right-8 bottom-8 rounded-full h-20 w-20 bg-rose-500 flex items-center justify-center shadow-sm z-[-1] cursor-pointer">
+            <img src="images/support.webp" alt="support">
+        </button>
     </div>
 
    <script>
@@ -120,24 +127,67 @@
     createApp({
         data() {
             return {
-                collapse: true,
-                menu : false
+                collapse: false,
+                menu : false,
+                spinner : false,
+                menuIndex : 0,
+                choosedQuery : null,
+                menuList : [
+                    {
+                        name : 'Menu 1',
+                        link : '#',
+                        queries : ['Qurery M1 1','Query M1 2','Query M1 3','Query M1 4']
+                    },
+                    {
+                        name : 'Menu 2',
+                        link : '#',
+                        queries : ['Qurery M2 1','Query M2 2','Query M2 3','Query M2 4']
+                    },
+                    {
+                        name : 'Menu 3',
+                        link : '#',
+                        queries : ['Qurery M3 1','M3 Query2','M3 Query3','M3 Query4']
+                    },
+                    {
+                        name : 'Menu 4',
+                        link : '#',
+                        queries : ['Qurery M4 1','Query M4 2','Query M4 3','Query M4 4']
+                    }
+                ]
             };
         },
         methods: {
              openChat (){
                 this.collapse = !this.collapse
+                this.spinner = true;
+                setTimeout(() => {
+                    this.spinner = false;
+                }, 1000);
              },
              openMenu (){
                 this.menu = !this.menu
              },
+             getQuery (index){
+                this.menuIndex = index;
+                this.menu = false
+             },
+             choosenQuery (query){
+                this.choosedQuery = query;
+             },
              onRecaptchaVerify(response) {
                 // The reCAPTCHA response is available in the 'response' parameter
+                this.spinner = false;
                 console.log('reCAPTCHA response:', response);
             },
+        },
+        mounted() {
+            // setTimeout(() => {
+            //     this.spinner = false;
+            // }, 1000);
         }
+
     }).mount('#app')
-</script>
+   </script>
 
 </body>
 </html>
