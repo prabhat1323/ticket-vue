@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.7.0/remixicon.css" integrity="sha512-vgK7iuWG4Uq4GJHovntONntOoSduelAYImQTT3f0mvdUcI95qQgSmf4ldDhn/FNl3g/xouqOtsm/NxFqaTnxbA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.7.0/remixicon.css"
+        integrity="sha512-vgK7iuWG4Uq4GJHovntONntOoSduelAYImQTT3f0mvdUcI95qQgSmf4ldDhn/FNl3g/xouqOtsm/NxFqaTnxbA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -16,43 +19,50 @@
     <!-- Add reCAPTCHA script -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
-        body{
+        body {
             font-family: 'Open Sans', sans-serif;
             scrollbar-width: thin;
         }
+
         .content::-webkit-scrollbar {
-            width: 8px; /* Adjust width as needed */
+            width: 8px;
+            /* Adjust width as needed */
         }
 
         .content::-webkit-scrollbar-thumb {
-                background-color: rgb(148 163 184); /* Adjust color as needed */
+            background-color: rgb(148 163 184);
+            /* Adjust color as needed */
         }
 
         .content::-webkit-scrollbar-track {
-        /* background-color: #2c3e50; Adjust color as needed */
-        background-color: rgb(203 213 225);
+            background-color: rgb(203 213 225);
         }
     </style>
 </head>
+
 <body class="bg-white">
     <div id="app">
-        <div id="modal" :class="{ 'hidden animate__animated animate__zoomOut': !collapse, 'block animate__animated animate__slideInRight': collapse }" class="bg-slate-50 fixed h-screen md:h-4/5 w-[360px] bottom-2 right-2 z-49">
+        <div id="modal" :class="{ 'hidden animate__animated animate__zoomOut': !collapse, 'block animate__animated animate__slideInRight': collapse }"
+            class="bg-slate-50 fixed h-screen md:h-4/5 w-[400px] bottom-2 right-2 z-49">
             <div class="relative w-full h-full border">
                 <!-- spinner -->
                 <div :class="{ 'hidden': !spinner }" class="w-full h-full absolute z-1 bg-slate-100 flex items-center justify-center flex-col z-50">
                     <i class="fa fa-spinner fa-spin text-rose-400 text-6xl"></i>
                     <p class="text-rose-400">Please wait...</p>
                 </div>
-                <div :class="{ 'hidden': spinner }" class="w-full hidden h-full absolute z-1 bg-slate-100 flex items-center justify-center flex-col z-50">
-                    <div class="g-recaptcha" data-sitekey="6Lc1zB4oAAAAABqKJGvOjxpriQmvgghT2h-mk-UK" @verify="onRecaptchaVerify"></div>
+                <div :class="{ 'hidden': spinner }"
+                    class="w-full hidden h-full absolute z-1 bg-slate-100 flex items-center justify-center flex-col z-50">
+                    <div class="g-recaptcha" data-sitekey="6Lc1zB4oAAAAABqKJGvOjxpriQmvgghT2h-mk-UK"
+                        @verify="onRecaptchaVerify"></div>
                 </div>
                 <!-- start header code  -->
-                <header class="bg-rose-500 flex items-center justify-between p-2 py-3 text-white">
+                <header
+                    class="bg-rose-500 flex items-center justify-between p-2 py-3 text-white">
                     <div class="text-2xl flex gap-2 items-center">
-                        <div class="h-10 w-10 shadow-sm border">
+                        <div class="h-10 w-10 shadow-sm border rounded-full">
                             <img src="images/support.webp" alt="support">
                         </div>
-                        <p class="text-sm font-bold">Ask Epp</p>
+                        <p class="text-sm font-bold">SolarAssist Pro</p>
                     </div>
                     <div class="flex gap-2">
                         <button @click="openChat"><i class="ri-subtract-line text-2xl cursor-pointer"></i></button>
@@ -62,132 +72,289 @@
                 <!-- end header code  -->
 
                 <!-- start content -->
-                <div class="content w-full p-4 py-10 overflow-y-auto h-5/6 ">
-                    <div class="flex gap-4 mb-4">
-                        <div>
-                            <div class="h-10 w-10 border bg-rose-500">
-                                <img src="images/support.webp" alt="support">
+                <div class="content w-full p-4 py-10 overflow-y-auto h-5/6 " ref="chatContainer">
+                    <div class="flex flex-col gap-4" ref="dynamicMessage">
+                        <!-- Receiver's Message (Right) -->
+                        <div class="flex w-9/12 justify-end gap-6 bg-white rounded-lg shadow-lg p-4">
+                            <p class="text-gray-500 text-sm">
+                                {{ supportMessage.text }}
+                            </p>
+                            <div>
+                                <div class="h-10 w-10 border bg-rose-500 rounded-full">
+                                    <img src="images/support.webp" width="100" alt="support">
+                                </div>
                             </div>
                         </div>
-                        <p class="text-gray-500 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Placeat vel libero maiores repudiandae quaerat harum amet obcaecati praesentium quisquam officia magni, et odio quas provident atque dolores sapiente quos deleniti!</p>
-                    </div>
                     
-                    <p class="py-2 text-teal-600 mb-4">Here are some popular queries</p>
-                    <div class="grid grid-cols-3 gap-3 text-sm">
-                        <button @click="choosenQuery(query)" v-for="(query, index) in menuList[menuIndex].queries" class="bg-white p-2 border border-teal-300 rounded hover:bg-teal-600 hover:text-white">{{ query }}</button> 
+                        <!-- Sender's Message (Left) -->
+                        <div>
+                            <p class="py-2 text-teal-600 mb-4 text-sm">Hier sind einige beliebte Abfragen?</p>
+                            <div class="flex flex-wrap gap-3 text-sm">
+                                <button @click="choosenQuery(query)"
+                                    v-for="(query, index) in menuList[menuIndex].queries"
+                                    class="bg-white p-2 border border-teal-300 rounded-[50px] hover:bg-teal-600 hover:text-white">{{ query.question }}</button>
+                            </div>
+                        </div>
+                    
+                        <!-- User Messages -->
+                        <div v-for="(message, index) in userQuestions" :key="index"
+                            :class="['flex', 'w-9/12', message.from === 'user' ? 'justify-start' : 'justify-end', 'gap-6', 'bg-gray-200', 'rounded-lg', 'shadow-lg', 'p-4']">
+                            <div>
+                                <div class="h-10 w-10 border bg-rose-500 rounded-full">
+                                    <img src="images/support.webp" width="100" alt="support">
+                                </div>
+                            </div>
+                            <p class="text-gray-500 text-sm">
+                                {{ message.text }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="bg-white my-4 flex items-center gap-4 p-3 shadow-sm">
+                   
+                    <!-- <div class="bg-white my-4 flex items-center gap-4 p-3 shadow-sm">
                         <div class="border p-2 py-1 bg-slate-50">
                             <i class="ri-user-line text-lg font-bold text-rose-600"></i>
                         </div>
                         <div>
                             <button class="bg-teal-600 p-2 px-4 text-white rounded text-sm">Menu 1</button>
                         </div>
-                    </div>
-                    <div class="w-full">
-                        <input type="text" class="border p-2 py-3 w-full text-sm shadow-sm border-teal-300 focus:outline-none" placeholder="Enter your order no">
-                    </div>
-                </div>
-                <!-- end content -->
-
-                <!-- footer code start -->
-                <footer class="w-full absolute bottom-0 left-0 h-20 bg-gray-100 border-t p-2 flex justify-between items-center border-bottom gap-2">
-                    <div class="bg-white flex justify-center items-center border px-3 py-1 relative cursor-pointer">
-                        <button  @click="openMenu"><i :class="{ 'ri-menu-line': !menu, 'ri-close-fill': menu }" class="text-rose-600 text-2xl"></i></button>
-                        <div :class="{ 'hidden': !menu, 'block': menu }" class="absolute border w-[150px] bottom-12 left-0 bg-slate-50 rounded">
-                            <ul class="flex flex-col">
-                                <li v-for="(menu, index) in menuList" class="border-b px-2 py-2 text-slate-600 hover:text-rose-600 hover:bg-white"><a href="#" @click="getQuery(index)">{{menu.name}}</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="w-[85%]">
+                    </div> -->
+                    <!-- <div class="w-full">
                         <form action="">
                             <div class="relative w-full">
-                                <input class="p-2 w-full border focus:outline-none" placeholder="Type your Question here..." />
-                                <button type="submit" disabled class="text-rose-600 text-2xl">
+                                <input v-model="userQuestion" class="p-2 w-full border focus:outline-none"
+                                    placeholder="Type your Question here..." />
+                                <button class="text-rose-600 text-2xl" @click="sendMessage">
                                     <i class="ri-send-plane-2-line absolute right-2 top-2"></i>
                                 </button>
                             </div>
                         </form>
+                    </div> -->
+                </div>
+                <!-- end content -->
+
+                <!-- footer code start -->
+                <footer
+                    class="w-full absolute bottom-0 left-0 h-20 bg-gray-100 border-t p-2 flex justify-between items-center border-bottom gap-2">
+                    <div class="bg-white flex justify-center items-center border px-3 py-1 relative cursor-pointer">
+                        <button @click="openMenu"><i :class="{ 'ri-menu-line': !menu, 'ri-close-fill': menu }"
+                                class="text-rose-600 text-2xl"></i></button>
+                        <div :class="{ 'hidden': !menu, 'block': menu }"
+                            class="absolute border w-[150px] bottom-12 left-0 bg-slate-50 rounded">
+                            <ul class="flex flex-col">
+                                <li v-for="(menu, index) in menuList" class="border-b px-2 py-2 text-slate-600 hover:text-rose-600 hover:bg-white"><a
+                                        href="#" @click="getQuery(index)">{{menu.name}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="w-[85%]">
+
+                        <div class="relative w-full">
+                            <input v-model="userQuestion" class="p-2 w-full border focus:outline-none"
+                                placeholder="Type your Question here..." @keyup.enter="sendMessage" />
+                            <button class="text-rose-600 text-2xl" @click="sendMessage">
+                                <i class="ri-send-plane-2-line absolute right-2 top-2"></i>
+                            </button>
+                        </div>
+
                     </div>
                 </footer>
                 <!-- end footer code -->
 
-            </div> 
+            </div>
         </div>
 
-        <button @click="openChat" class="cursor-pointer fixed right-8 bottom-8 rounded-full h-20 w-20 bg-rose-500 flex items-center justify-center shadow-sm z-[-1] cursor-pointer">
+        <button @click="openChat"
+            class="cursor-pointer fixed right-8 bottom-8 rounded-full h-20 w-20 bg-rose-500 flex items-center justify-center shadow-sm z-[-1] cursor-pointer">
             <img src="images/support.webp" alt="support">
         </button>
     </div>
-
-   <script>
-    const { createApp, ref } = Vue
-
-    createApp({
-        data() {
-            return {
-                collapse: false,
-                menu : false,
-                spinner : false,
-                menuIndex : 0,
-                choosedQuery : null,
-                menuList : [
-                    {
-                        name : 'Menu 1',
-                        link : '#',
-                        queries : ['Qurery M1 1','Query M1 2','Query M1 3','Query M1 4']
+    <script>
+        const { createApp, ref } = Vue
+    
+        createApp({
+            data() {
+                return {
+                    collapse: true,
+                    menu: false,
+                    spinner: false,
+                    menuIndex: 0,
+                    choosedQuery: null,
+                    chatContainer: null,
+                    supportMessage: {
+                        text: '🌞 Willkommen bei SolarAssist Pro! Wie können wir Ihren Tag erhellen und Ihnen bei allen Fragen oder Anliegen rund um Solarenergie helfen? Einfach tippen, und wir bringen Licht ins Dunkel!',
+                        from: 'support',
                     },
-                    {
-                        name : 'Menu 2',
-                        link : '#',
-                        queries : ['Qurery M2 1','Query M2 2','Query M2 3','Query M2 4']
-                    },
-                    {
-                        name : 'Menu 3',
-                        link : '#',
-                        queries : ['Qurery M3 1','M3 Query2','M3 Query3','M3 Query4']
-                    },
-                    {
-                        name : 'Menu 4',
-                        link : '#',
-                        queries : ['Qurery M4 1','Query M4 2','Query M4 3','Query M4 4']
-                    }
-                ]
-            };
-        },
-        methods: {
-             openChat (){
-                this.collapse = !this.collapse
-                this.spinner = true;
-                setTimeout(() => {
-                    this.spinner = false;
-                }, 1000);
-             },
-             openMenu (){
-                this.menu = !this.menu
-             },
-             getQuery (index){
-                this.menuIndex = index;
-                this.menu = false
-             },
-             choosenQuery (query){
-                this.choosedQuery = query;
-             },
-             onRecaptchaVerify(response) {
-                // The reCAPTCHA response is available in the 'response' parameter
-                this.spinner = false;
-                console.log('reCAPTCHA response:', response);
+                    userQuestion: '',
+                    userQuestions: [],
+                    answer: null,
+                    menuList: [{
+                            name: 'Solar',
+                            link: '#',
+                            queries: [{
+                                    question: 'Solar Panel Information',
+                                    answer: 'There are various types of solar panels, including monocrystalline, polycrystalline, and thin-film. Monocrystalline panels are known for their high efficiency and sleek appearance.'
+                                },
+                                {
+                                    question: 'Installation Guidance',
+                                    answer: 'Proper installation is crucial for optimal solar panel performance. Consider factors like shading and orientation. Consulting with a professional installer is recommended.'
+                                },
+                                {
+                                    question: 'System Sizing and Estimation',
+                                    answer: 'Estimate the size of your solar system based on your average energy consumption. Factors such as location, sunlight hours, and energy needs play a role in sizing.'
+                                },
+                                {
+                                    question: 'Cost Estimation',
+                                    answer: 'Solar panel costs vary based on type, brand, and installation complexity. Explore financing options and available incentives to make solar installations more affordable.'
+                                },
+                                {
+                                    question: 'FAQs and Troubleshooting',
+                                    answer: 'Frequently asked questions about solar energy, along with troubleshooting tips for common issues, are available in our FAQ section.'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Order',
+                            link: '#',
+                            queries: [{
+                                    question: 'Track Order',
+                                    answer: 'Enter your order number'
+                                },
+                                {
+                                    question: 'Order Status',
+                                    answer: 'Enter your order number'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Menu 3',
+                            link: '#',
+                            queries: [{
+                                    question: 'Query M3 1',
+                                    answer: 'Answer for Query M3 1.'
+                                },
+                                {
+                                    question: 'M3 Query2',
+                                    answer: 'Answer for M3 Query2.'
+                                },
+                                {
+                                    question: 'M3 Query3',
+                                    answer: 'Answer for M3 Query3.'
+                                },
+                                {
+                                    question: 'M3 Query4',
+                                    answer: 'Answer for M3 Query4.'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Menu 4',
+                            link: '#',
+                            queries: [{
+                                    question: 'Query M4 1',
+                                    answer: 'Answer for Query M4 1.'
+                                },
+                                {
+                                    question: 'Query M4 2',
+                                    answer: 'Answer for Query M4 2.'
+                                },
+                                {
+                                    question: 'Query M4 3',
+                                    answer: 'Answer for Query M4 3.'
+                                },
+                                {
+                                    question: 'Query M4 4',
+                                    answer: 'Answer for Query M4 4.'
+                                }
+                            ]
+                        }
+                    ]
+    
+                };
             },
-        },
-        mounted() {
-            // setTimeout(() => {
-            //     this.spinner = false;
-            // }, 1000);
-        }
-
-    }).mount('#app')
-   </script>
+    
+            methods: {
+                openChat() {
+                    this.collapse = !this.collapse
+                    this.spinner = true;
+                    setTimeout(() => {
+                        this.spinner = false;
+                    }, 1000);
+                },
+                openMenu() {
+                    this.menu = !this.menu
+                },
+                getQuery(index) {
+                    this.menuIndex = index;
+                    this.menu = false
+                },
+    
+                onRecaptchaVerify(response) {
+                    // The reCAPTCHA response is available in the 'response' parameter
+                    this.spinner = false;
+                    console.log('reCAPTCHA response:', response);
+                },
+                choosenQuery(query) {
+                    this.choosedQuery = query;
+    
+                    // Simulate a response based on the selected query after a short delay
+                    setTimeout(() => {
+                        const response = {
+                            text: query.answer, // Use the answer from the selected query
+                            from: 'support',
+                        };
+                        this.userQuestions.push(response);
+                    }, 500);
+                },
+    
+                sendMessage() {
+                    if (this.userQuestion.trim() !== '') {
+                        this.userQuestions.push({
+                            text: this.userQuestion,
+                            from: 'user',
+                        });
+    
+                        // Simulate a response from support after a short delay
+                        if (this.choosedQuery) {
+                            // If a query was chosen, use its answer for the response
+                            setTimeout(() => {
+                                const response = {
+                                    text: this.choosedQuery.answer,
+                                    from: 'support',
+                                };
+                                this.userQuestions.push(response);
+                            }, 500);
+                        } else {
+                            // Otherwise, provide a default response
+                            setTimeout(() => {
+                                this.userQuestions.push({
+                                    text: 'Thank you for your message!',
+                                    from: 'support',
+                                });
+                            }, 500);
+                        }
+    
+                        // Clear the input after sending the message
+                        this.userQuestion = '';
+                        this.scrollChatToBottom();
+                    }
+                },
+                scrollChatToBottom() {
+                if (this.chatContainer) {
+                    this.$nextTick(() => {
+                        this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+                    });
+                }
+            },
+            },
+    
+            mounted() {
+                this.chatContainer = this.$refs.chatContainer;
+            }
+    
+        }).mount('#app')
+    </script>
+    
 
 </body>
+
 </html>
